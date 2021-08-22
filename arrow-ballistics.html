@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" prefix="og: http://ogp.me/ns# fb: https://www.facebook.com/2008/fbml">
+<head>
+    <title>Arrow Ballistics Calculation - Jason Ross's Blog</title>
+    <!-- Using the latest rendering mode for IE -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+
+<link rel="canonical" href="/arrow-ballistics.html">
+
+        <meta name="author" content="Jason Ross" />
+        <meta name="description" content="Arrow Ballistics Calculation This post was inspired by a couple of videos[1] on the excellent YouTube channel Tod&#39;s Workshop involving testing the maximum range of crossbow bolts. Comments discussed whether 45 degrees was really the optimal angle for firing crossbow bolts for maximum range, and most agreed that an …" />
+
+        <meta property="og:site_name" content="Jason Ross's Blog" />
+        <meta property="og:type" content="article"/>
+        <meta property="og:title" content="Arrow Ballistics Calculation"/>
+        <meta property="og:url" content="/arrow-ballistics.html"/>
+        <meta property="og:description" content="Arrow Ballistics Calculation This post was inspired by a couple of videos[1] on the excellent YouTube channel Tod&#39;s Workshop involving testing the maximum range of crossbow bolts. Comments discussed whether 45 degrees was really the optimal angle for firing crossbow bolts for maximum range, and most agreed that an …"/>
+        <meta property="article:published_time" content="2021-08-21" />
+            <meta property="article:section" content="Fun Stuff" />
+            <meta property="article:author" content="Jason Ross" />
+
+
+
+    <!-- Bootstrap -->
+        <link rel="stylesheet" href="/theme/css/bootstrap.min.css" type="text/css"/>
+    <link href="/theme/css/font-awesome.min.css" rel="stylesheet">
+
+    <link href="/theme/css/pygments/tango.css" rel="stylesheet">
+    <link rel="stylesheet" href="/theme/css/style.css" type="text/css"/>
+        <link href="/css/custom.css" rel="stylesheet">
+
+
+                    <script src="/js/https://d3js.org/d3.v4.js"></script>
+
+</head>
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="/" class="navbar-brand">
+Jason Ross's Blog            </a>
+        </div>
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <ul class="nav navbar-nav">
+                        <li class="active">
+                            <a href="/category/fun-stuff.html">Fun stuff</a>
+                        </li>
+                        <li >
+                            <a href="/category/version-control.html">Version control</a>
+                        </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+</div> <!-- /.navbar -->
+
+<!-- Banner -->
+<!-- End Banner -->
+
+<!-- Content Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-sm-9">
+    <section id="content">
+        <article>
+            <header class="page-header">
+                <h1>
+                    <a href="/arrow-ballistics.html"
+                       rel="bookmark"
+                       title="Permalink to Arrow Ballistics Calculation">
+                        Arrow Ballistics Calculation
+                    </a>
+                </h1>
+            </header>
+            <div class="entry-content">
+                <div class="panel">
+                    <div class="panel-body">
+<footer class="post-info">
+    <span class="label label-default">Date</span>
+    <span class="published">
+        <i class="fa fa-calendar"></i><time datetime="2021-08-21T00:00:00-07:00"> Sat 21 August 2021</time>
+    </span>
+
+
+
+
+
+    
+</footer><!-- /.post-info -->                    </div>
+                </div>
+                <h1>Arrow Ballistics Calculation</h1>
+<p>This post was inspired by a couple of videos[1] on the excellent 
+YouTube channel <em>Tod's Workshop</em> involving testing the maximum range
+of crossbow bolts. Comments discussed whether 45 degrees was really 
+the optimal angle for firing crossbow bolts for maximum range, and
+most agreed that an angle between 30 and 40 degrees was ideal. However,
+physical testing revealed that maximum range was achieved at close to
+45 degrees.</p>
+<p>This seemed like an interesting physics problem that could reasonably
+be written in JavaScript or TypeScript, so I decided to take it on. 
+The partial differential equations are as follows:</p>
+<div class="math">$$m \frac{d v}{dt} = -D(\psi) - m g \sin{\theta}$$</div>
+<div class="math">$$m v \frac{d \theta}{dt} = L(\psi) - m g \cos{\theta}$$</div>
+<div class="math">$$I \frac{d^2 \psi}{dt^2} = M(\psi)$$</div>
+<div class="math">$$D = C_D(\psi) A_D(\psi) v^2 \rho$$</div>
+<div class="math">$$L = C_L(\psi) A_L(\psi) v^2 \rho \sin{\psi}$$</div>
+<p>with the following definitions:</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="math">\(m\)</span></td>
+<td>Mass</td>
+</tr>
+<tr>
+<td><span class="math">\(v\)</span></td>
+<td>Speed</td>
+</tr>
+<tr>
+<td><span class="math">\(\psi\)</span></td>
+<td>Angle of attack</td>
+</tr>
+<tr>
+<td><span class="math">\(\theta\)</span></td>
+<td>Angle of motion</td>
+</tr>
+<tr>
+<td><span class="math">\(g\)</span></td>
+<td>Gravitational acceleration</td>
+</tr>
+<tr>
+<td><span class="math">\(I\)</span></td>
+<td>Moment of inertia</td>
+</tr>
+<tr>
+<td><span class="math">\(D\)</span></td>
+<td>Drag force</td>
+</tr>
+<tr>
+<td><span class="math">\(C_D\)</span></td>
+<td>Coefficient of drag</td>
+</tr>
+<tr>
+<td><span class="math">\(A_D\)</span></td>
+<td>Drag area</td>
+</tr>
+<tr>
+<td><span class="math">\(L\)</span></td>
+<td>Lift force</td>
+</tr>
+<tr>
+<td><span class="math">\(C_L\)</span></td>
+<td>Coefficient of lift</td>
+</tr>
+<tr>
+<td><span class="math">\(A_L\)</span></td>
+<td>Lift area</td>
+</tr>
+<tr>
+<td><span class="math">\(\rho\)</span></td>
+<td>Air density</td>
+</tr>
+<tr>
+<td><span class="math">\(M\)</span></td>
+<td>Pitching moment</td>
+</tr>
+</tbody>
+</table>
+<p>The lift and drag forces depend on the angle of attack. This relationship is
+approximated by finding the projected area of the body in the direction of
+motion. Motion is calculated with a 4-th order Runge Kutta integrator.</p>
+<p>Lift was added for completeness and doesn't have much of an effect at close to
+zero angle of attack. However, setting a high lift area and a low mass leads to
+interesting results.</p>
+<div id="controls"></div>
+
+<div id="graph"></div>
+
+<div id="angle"></div>
+
+<table>
+    <tr>
+    <td><label for="total_distance">Total Distance</label></td>
+    <td><output id="total_distance"></td>
+    </tr>
+    <tr>
+    <td><label for="time_of_flight">Time of Flight</label></td>
+    <td><output id="time_of_flight"></td>
+    </tr>
+    <tr>
+    <td><label for="energy">Energy</label></td>
+    <td><output id="energy"></td>
+    </tr>
+    <tr>
+    <td><label for="momentum">Momentum</label></td>
+    <td><output id="momentum"></td>
+    </tr>
+</table>
+
+<p>I liked learning TypeScript for this project. It was easy to learn coming from a
+python background and npm made it easy to manage the build environment. However,
+I found a lot of documentation and community around JavaScript and TypeScript to
+be a bit <em>industrial</em>. The focus is not on helping people make little
+calculators for their personal blogs. Finding how to get a slider to interact
+with a JavaScript object was a chore, because almost all of the results were
+something to the effect of <em>use the [] framework on your webserver running
+node</em>. </p>
+<p>The source code for this is available on <a href="https://github.com/Jason-S-Ross/arrow-ballistics">github</a>.</p>
+<p>[1]: <a href="https://www.youtube.com/watch?v=dTW0CrXugdQ">Distance - Which angle is best?</a> <a href="https://www.youtube.com/watch?v=dTW0CrXugdQ">850lbs Crossbow DISTANCE TEST</a></p>
+<script type="text/javascript">if (!document.getElementById('mathjaxscript_pelican_#%@#$@#')) {
+    var align = "center",
+        indent = "0em",
+        linebreak = "false";
+
+    if (false) {
+        align = (screen.width < 768) ? "left" : align;
+        indent = (screen.width < 768) ? "0em" : indent;
+        linebreak = (screen.width < 768) ? 'true' : linebreak;
+    }
+
+    var mathjaxscript = document.createElement('script');
+    mathjaxscript.id = 'mathjaxscript_pelican_#%@#$@#';
+    mathjaxscript.type = 'text/javascript';
+    mathjaxscript.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.3/latest.js?config=TeX-AMS-MML_HTMLorMML';
+
+    var configscript = document.createElement('script');
+    configscript.type = 'text/x-mathjax-config';
+    configscript[(window.opera ? "innerHTML" : "text")] =
+        "MathJax.Hub.Config({" +
+        "    config: ['MMLorHTML.js']," +
+        "    TeX: { extensions: ['AMSmath.js','AMSsymbols.js','noErrors.js','noUndefined.js'], equationNumbers: { autoNumber: 'none' } }," +
+        "    jax: ['input/TeX','input/MathML','output/HTML-CSS']," +
+        "    extensions: ['tex2jax.js','mml2jax.js','MathMenu.js','MathZoom.js']," +
+        "    displayAlign: '"+ align +"'," +
+        "    displayIndent: '"+ indent +"'," +
+        "    showMathMenu: true," +
+        "    messageStyle: 'normal'," +
+        "    tex2jax: { " +
+        "        inlineMath: [ ['\\\\(','\\\\)'] ], " +
+        "        displayMath: [ ['$$','$$'] ]," +
+        "        processEscapes: true," +
+        "        preview: 'TeX'," +
+        "    }, " +
+        "    'HTML-CSS': { " +
+        "        availableFonts: ['STIX', 'TeX']," +
+        "        preferredFont: 'STIX'," +
+        "        styles: { '.MathJax_Display, .MathJax .mo, .MathJax .mi, .MathJax .mn': {color: 'inherit ! important'} }," +
+        "        linebreaks: { automatic: "+ linebreak +", width: '90% container' }," +
+        "    }, " +
+        "}); " +
+        "if ('default' !== 'default') {" +
+            "MathJax.Hub.Register.StartupHook('HTML-CSS Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax['HTML-CSS'].FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+            "MathJax.Hub.Register.StartupHook('SVG Jax Ready',function () {" +
+                "var VARIANT = MathJax.OutputJax.SVG.FONTDATA.VARIANT;" +
+                "VARIANT['normal'].fonts.unshift('MathJax_default');" +
+                "VARIANT['bold'].fonts.unshift('MathJax_default-bold');" +
+                "VARIANT['italic'].fonts.unshift('MathJax_default-italic');" +
+                "VARIANT['-tex-mathit'].fonts.unshift('MathJax_default-italic');" +
+            "});" +
+        "}";
+
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(configscript);
+    (document.body || document.getElementsByTagName('head')[0]).appendChild(mathjaxscript);
+}
+</script>
+            </div>
+            <!-- /.entry-content -->
+        </article>
+    </section>
+
+        </div>
+        <div class="col-sm-3" id="sidebar">
+            <aside>
+<!-- Sidebar -->
+<section class="well well-sm">
+  <ul class="list-group list-group-flush">
+
+<!-- Sidebar/Social -->
+<li class="list-group-item">
+  <h4><i class="fa fa-home fa-lg"></i><span class="icon-label">Social</span></h4>
+  <ul class="list-group" id="social">
+    <li class="list-group-item"><a href="https://www.linkedin.com/in/jason-ross-80b962b2/"><i class="fa fa-linkedin-square fa-lg"></i> LinkedIn</a></li>
+  </ul>
+</li>
+<!-- End Sidebar/Social -->
+  </ul>
+</section>
+<!-- End Sidebar -->            </aside>
+        </div>
+    </div>
+</div>
+<!-- End Content Container -->
+
+<footer>
+   <div class="container">
+      <hr>
+      <div class="row">
+         <div class="col-xs-10">&copy; 2021 Jason Ross
+            &middot; Powered by <a href="https://github.com/getpelican/pelican-themes/tree/master/pelican-bootstrap3" target="_blank">pelican-bootstrap3</a>,
+            <a href="http://docs.getpelican.com/" target="_blank">Pelican</a>,
+            <a href="http://getbootstrap.com" target="_blank">Bootstrap</a>         </div>
+         <div class="col-xs-2"><p class="pull-right"><i class="fa fa-arrow-up"></i> <a href="#">Back to top</a></p></div>
+      </div>
+   </div>
+</footer>
+<script src="/theme/js/jquery.min.js"></script>
+
+<!-- Include all compiled plugins (below), or include individual files as needed -->
+<script src="/theme/js/bootstrap.min.js"></script>
+
+<!-- Enable responsive features in IE8 with Respond.js (https://github.com/scottjehl/Respond) -->
+<script src="/theme/js/respond.min.js"></script>
+
+
+
+
+
+                <script src="/js/arrowcalc.js"></script>
+</body>
+</html>
